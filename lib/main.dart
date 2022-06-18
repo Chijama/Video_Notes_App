@@ -3,7 +3,6 @@ import 'package:speech_to_text/video_screens/network.dart';
 import 'video_screens/youtube.dart';
 import 'video_screens/vimeo.dart';
 import 'video_screens/network.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -124,10 +123,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: () => vimeoUrl(),
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Play video from Vimeo',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -143,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
         barrierDismissible: true,
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Enter Youtube URL'),
+          title: const Text('Enter Youtube URL'),
           content: Row(
             children: [
               Expanded(
@@ -165,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () async {
                     if (youtubeurlcontroller.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Please enter url'),
                         ),
                       );
@@ -176,8 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                               builder: ((context) => PlayVideoFromYoutube(
-                                  youtubeVideoUrl:
-                                      youtubeurlcontroller.text))));
+                                    youtubeVideoUrl: youtubeurlcontroller.text,
+                                  ))));
 
                       return;
                     }

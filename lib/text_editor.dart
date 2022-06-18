@@ -45,6 +45,14 @@ class _TextEditorState extends State<TextEditor> {
                       spreadRadius: 0.0,
                     ),
                   ]),
+                  // child: Container(
+                  //   child: TextField(
+                  //     maxLines: 8, //or null
+                  //     decoration: InputDecoration.collapsed(
+                  //         hintText: "Enter your text here"),
+                  //   ),
+                  //),
+
                   child: QuillEditor.basic(
                       controller: _controller, readOnly: false),
                 ),

@@ -3,6 +3,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:speech_to_text/buttons_bar.dart';
 import 'package:speech_to_text/text_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
   const PlayVideoFromYoutube({Key? key, required this.youtubeVideoUrl})
@@ -17,15 +18,24 @@ class PlayVideoFromYoutube extends StatefulWidget {
 class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
   late final PodPlayerController controller;
   final videoTextFieldCtr = TextEditingController();
-  final screenshotController = ScreenshotController();
+  final screenshot_Controller = ScreenshotController();
 
   void loadVideo() async {
     await controller.changeVideo(
         playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl));
   }
 
+  _requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+    final info = statuses[Permission.storage].toString();
+    print('$info');
+  }
+
   @override
   void initState() {
+    _requestPermission();
     controller = PodPlayerController(
         playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl))
       ..initialise();
@@ -44,16 +54,15 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
     return Scaffold(
       appBar: AppBar(title: const Text('Youtube player')),
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Screenshot(
-                controller: screenshotController,
+                controller: screenshot_Controller,
                 child: Container(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.height / 2,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.5,
                   child: PodVideoPlayer(
-                    frameAspectRatio: 16 / 9,
                     controller: controller,
                     videoThumbnail: const DecorationImage(
                       image: NetworkImage(
@@ -64,15 +73,23 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Progress(
-                  screenshotController: screenshotController,
-                  controller: controller,
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      child: Progress(
+                        screenshotController: screenshot_Controller,
+                        controller: controller,
+                      ),
+                    ),
+                  ],
                 ),
-                flex: 1,
               ),
-              Expanded(
-                flex: 3,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: TextEditor(),
               ),
               //const SizedBox(height: 40),
