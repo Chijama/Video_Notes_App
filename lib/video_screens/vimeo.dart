@@ -1,5 +1,6 @@
 import 'package:pod_player/pod_player.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/buttons_bar.dart';
 import 'package:speech_to_text/text_editor.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -54,8 +55,24 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
                   ),
                 ),
               ),
-              Expanded(
-                flex: 3,
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      child: Progress(
+                        screenshotController: screenshot_controller,
+                        controller: controller,
+                        filePath: "",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: TextEditor(),
               ),
               //const SizedBox(height: 40),
@@ -63,50 +80,11 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
           ),
         ),
       ),
-    );
+
+          );
   }
 
-  Row _loadVideoFromUrl() {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: TextField(
-            controller: videoTextFieldCtr,
-            decoration: const InputDecoration(
-              labelText: 'Enter vimeo id',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: 'ex: 518228118',
-              border: OutlineInputBorder(),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        FocusScope(
-          canRequestFocus: false,
-          child: ElevatedButton(
-            onPressed: () async {
-              if (videoTextFieldCtr.text.isEmpty) {
-                snackBar('Please enter the id');
-                return;
-              }
-              try {
-                snackBar('Loading....');
-                FocusScope.of(context).unfocus();
-                await controller.changeVideo(
-                  playVideoFrom: PlayVideoFrom.vimeo(videoTextFieldCtr.text),
-                );
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              } catch (e) {
-                snackBar('Unable to load,\n $e');
-              }
-            },
-            child: const Text('Load Video'),
-          ),
-        ),
-      ],
-    );
-  }
+
 
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
