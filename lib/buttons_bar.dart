@@ -1,22 +1,25 @@
-import 'dart:typed_data';
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_quill/flutter_quill.dart' as q;
-import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:intl/intl.dart';
-
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class Progress extends StatefulWidget {
   final PodPlayerController controller;
   final ScreenshotController screenshotController;
+  final String filePath;
 
   //final List<Duration> timestamps;
   const Progress(
-      {required this.controller, required this.screenshotController, Key? key})
+      {required this.controller,
+      required this.screenshotController,
+      required this.filePath,
+      Key? key})
       : super(key: key);
 
   @override
@@ -24,49 +27,52 @@ class Progress extends StatefulWidget {
 }
 
 class _ProgressState extends State<Progress> {
-  var _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+  final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   @override
-  Widget build(BuildContext context) => Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildButton(Icon(Icons.timer), 'Timestamps', getPosition()),
-            SizedBox(width: 30),
-            buildButton(Icon(Icons.camera), 'Screenshot', getScreenshot()),
-            SizedBox(width: 30),
-            buildButton(
-                Icon(Icons.notes_outlined), 'Screenshot', getScreenshot()),
-            SizedBox(width: 30),
-            buildButton(Icon(Icons.camera), 'Screenshot', getScreenshot())
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        buildButton(const Icon(Icons.timer), 'Timestamps', getPosition),
+        const SizedBox(width: 30),
+        buildButton(const Icon(Icons.camera), 'Screenshot', getPosition),
+        const SizedBox(width: 30),
+        buildButton(const Icon(Icons.notes_outlined), 'Transcripts', loadTranscript),
+        const SizedBox(width: 30),
+        buildButton(const Icon(Icons.camera), 'Real-Time Transcripts', getPosition)
+      ],
+    );
+  }
 
-  Widget buildButton(Widget icons, String tip, Future onpressed) => ClipRRect(
-        //clipBehavior: Clip.hardEdge ,
-
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          height: 40.0,
-          width: 40.0,
-          color: Colors.blue,
-          child: IconButton(
-            color: Colors.white,
-            tooltip: tip,
-            icon: icons,
-            onPressed: () => onpressed,
-          ),
-        ),
-      );
+  Widget buildButton(Widget icons, String tip, Function()? onpressed) {
+    return Container(
+      height: 40.0,
+      width: 40.0,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.blue,
+      ),
+      child: IconButton(
+        onPressed: getPosition,
+        icon: icons,
+        color: Colors.white,
+      ),
+    );
+  }
 
   Future getScreenshot() async {
     final image = await widget.screenshotController.capture();
     if (image == null) return;
-    final result =
-        await ImageGallerySaver.saveImage(image.buffer.asUint8List());
+    final result = await ImageGallerySaver.saveImage(image.buffer.asUint8List());
     print('$image ********** Saved to gallery *********** $result');
     _showInSnackBar(message: 'Saved to gallery - video screenshot');
     //await saveImage(image);
+  }
+
+  loadTranscript() async {
+    print(widget.filePath);
+    final url = 'http://127.0.0.1:5000/name';
+    return await http.post(Uri.parse(url), body: json.encode({'name': widget.filePath}));
   }
 
   void _showInSnackBar({String message = ''}) {
@@ -74,27 +80,21 @@ class _ProgressState extends State<Progress> {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
-        duration: (Duration(seconds: 3)),
+        duration: (const Duration(seconds: 3)),
         elevation: 0,
         backgroundColor: Colors.black,
       ),
     );
   }
-}
 
-_requestPermission() async {
-  Map<Permission, PermissionStatus> statuses = await [
-    Permission.storage,
-  ].request();
-  final info = statuses[Permission.storage].toString();
-  print('$info');
-}
-
-// Future<String> saveImage(Uint8List bytes) async {
-Future getPosition() async {
-  //String currentPosition = widget.controller.currentVideoPosition.toString();
+  // Future<String> saveImage(Uint8List bytes) async {
+  getPosition() async {
+    String currentPosition = widget.controller.currentVideoPosition.toString();
+    log(currentPosition);
+    return currentPosition;
+  }
 }
 
 Future goToPosition(

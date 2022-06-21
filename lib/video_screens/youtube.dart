@@ -1,13 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:speech_to_text/buttons_bar.dart';
 import 'package:speech_to_text/text_editor.dart';
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
-  const PlayVideoFromYoutube({Key? key, required this.youtubeVideoUrl})
-      : super(key: key);
+  const PlayVideoFromYoutube({Key? key, required this.youtubeVideoUrl}) : super(key: key);
 
   final String youtubeVideoUrl;
   // static const routeName = '/youtube-screen';
@@ -21,8 +20,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
   final screenshot_Controller = ScreenshotController();
 
   void loadVideo() async {
-    await controller.changeVideo(
-        playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl));
+    await controller.changeVideo(playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl));
   }
 
   _requestPermission() async {
@@ -36,8 +34,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
   @override
   void initState() {
     _requestPermission();
-    controller = PodPlayerController(
-        playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl))
+    controller = PodPlayerController(playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl))
       ..initialise();
     // loadVideo()
     super.initState();
@@ -60,8 +57,8 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
               Screenshot(
                 controller: screenshot_Controller,
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  // width: MediaQuery.of(context).size.width,
+                  // height: MediaQuery.of(context).size.height * 0.5,
                   child: PodVideoPlayer(
                     controller: controller,
                     videoThumbnail: const DecorationImage(
@@ -82,6 +79,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
                       child: Progress(
                         screenshotController: screenshot_Controller,
                         controller: controller,
+                        filePath: "",
                       ),
                     ),
                   ],
@@ -90,7 +88,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                child: TextEditor(),
+                child: TextEditor(controller: controller),
               ),
               //const SizedBox(height: 40),
             ],
@@ -99,59 +97,18 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
       ),
     );
   }
-
-  Row _loadVideoFromUrl() {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: TextField(
-            controller: videoTextFieldCtr,
-            decoration: const InputDecoration(
-              labelText: 'Enter youtube url/id',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: 'https://youtu.be/A3ltMaM6noM',
-              border: OutlineInputBorder(),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        FocusScope(
-          canRequestFocus: false,
-          child: ElevatedButton(
-            onPressed: () async {
-              if (videoTextFieldCtr.text.isEmpty) {
-                snackBar('Please enter the url');
-                return;
-              }
-              try {
-                snackBar('Loading....');
-                FocusScope.of(context).unfocus();
-                await controller.changeVideo(
-                  playVideoFrom: PlayVideoFrom.youtube(videoTextFieldCtr.text),
-                );
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              } catch (e) {
-                snackBar('Unable to load,\n $e');
-              }
-            },
-            child: const Text('Load Video'),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void snackBar(String text) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-        ),
-      );
-  }
 }
+
+  // void snackBar(String text) {
+  //   ScaffoldMessenger.of(context)
+  //     ..hideCurrentSnackBar()
+  //     ..showSnackBar(
+  //       SnackBar(
+  //         content: Text(text),
+  //       ),
+  //     );
+  // }
+
 
 
 
