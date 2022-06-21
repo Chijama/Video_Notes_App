@@ -15,6 +15,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
   late final PodPlayerController controller;
   final videoTextFieldCtr = TextEditingController();
   final screenshot_controller = ScreenshotController();
+  final TextEditingController noteController = TextEditingController();
   GlobalKey previewContainer = new GlobalKey();
 
   @override
@@ -65,6 +66,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
                         previewContainer: previewContainer,
                         screenshotController: screenshot_controller,
                         controller: controller,
+                        noteController: noteController,
                         filePath: "",
                       ),
                     ),
@@ -74,7 +76,10 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                child: TextEditor(controller: controller),
+                child: TextEditor(
+                  controller: controller,
+                  noteController: noteController,
+                ),
               ),
               //const SizedBox(height: 40),
             ],

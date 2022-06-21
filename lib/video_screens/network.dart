@@ -20,6 +20,7 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
   late final PodPlayerController controller;
   final videoTextFieldCtr = TextEditingController();
   final screenshot_Controller = ScreenshotController();
+  final TextEditingController noteController = TextEditingController();
   GlobalKey previewContainer = new GlobalKey();
 
   _requestPermission() async {
@@ -76,6 +77,7 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.1,
                       child: Progress(
+                        noteController: noteController,
                         previewContainer: previewContainer,
                         screenshotController: screenshot_Controller,
                         controller: controller,
@@ -88,7 +90,10 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                child: TextEditor(controller: controller),
+                child: TextEditor(
+                  controller: controller,
+                  noteController: noteController,
+                ),
               ),
               //const SizedBox(height: 40),
             ],

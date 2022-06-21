@@ -4,8 +4,10 @@ import 'package:pod_player/pod_player.dart';
 
 class TextEditor extends StatefulWidget {
   final PodPlayerController controller;
+  final TextEditingController noteController;
 
-  const TextEditor({Key? key, required this.controller}) : super(key: key);
+  const TextEditor({Key? key, required this.controller, required this.noteController})
+      : super(key: key);
 
   @override
   State<TextEditor> createState() => _TextEditorState();
@@ -13,7 +15,6 @@ class TextEditor extends StatefulWidget {
 
 class _TextEditorState extends State<TextEditor> {
   final QuillController _controller = QuillController.basic();
-  final TextEditingController _noteController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -45,7 +46,7 @@ class _TextEditorState extends State<TextEditor> {
                   ),
                 ]),
                 child: TextFormField(
-                  controller: _noteController,
+                  controller: widget.noteController,
                   maxLines: null,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
@@ -54,11 +55,7 @@ class _TextEditorState extends State<TextEditor> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                _noteController.text = _noteController.text +
-                    " " +
-                    "${widget.controller.currentVideoPosition.toString().replaceRange(0, 1, "").replaceRange(7, 13, "").replaceFirst(":", "").replaceAll(".", "")}";
-              },
+              onPressed: () {},
               child: Text("Save"),
             ),
           ],

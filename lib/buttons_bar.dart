@@ -2,24 +2,25 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
-
 
 class Progress extends StatefulWidget {
   final PodPlayerController controller;
   final ScreenshotController screenshotController;
   final String filePath;
+  final TextEditingController noteController;
   final GlobalKey previewContainer;
 
   //final List<Duration> timestamps;
@@ -27,7 +28,8 @@ class Progress extends StatefulWidget {
       {required this.controller,
       required this.screenshotController,
       required this.filePath,
-        required this.previewContainer,
+      required this.noteController,
+      required this.previewContainer,
       Key? key})
       : super(key: key);
 
@@ -77,16 +79,16 @@ class _ProgressState extends State<Progress> {
     _showInSnackBar(message: 'Saved to gallery - video screenshot');
     //await saveImage(image);
   }
-  Future getScreenshot2() async{
+
+  Future getScreenshot2() async {
     List<String> imagePaths = [];
     final RenderBox box = context.findRenderObject() as RenderBox;
     return new Future.delayed(const Duration(milliseconds: 20), () async {
-      RenderRepaintBoundary? boundary = widget.previewContainer.currentContext!
-          .findRenderObject() as RenderRepaintBoundary?;
+      RenderRepaintBoundary? boundary =
+          widget.previewContainer.currentContext!.findRenderObject() as RenderRepaintBoundary?;
       ui.Image image = await boundary!.toImage();
       final directory = (await getApplicationDocumentsDirectory()).path;
-      ByteData? byteData =
-      await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
 
       Uint8List pngBytes = byteData!.buffer.asUint8List();
       File imgFile = new File('$directory/screenshot.png');
@@ -103,6 +105,7 @@ class _ProgressState extends State<Progress> {
       });
     });
   }
+
   loadTranscript() async {
     print(widget.filePath);
     final url = 'http://127.0.0.1:5000/name';
@@ -126,6 +129,11 @@ class _ProgressState extends State<Progress> {
   // Future<String> saveImage(Uint8List bytes) async {
   getPosition() async {
     String currentPosition = widget.controller.currentVideoPosition.toString();
+    setState(() {
+      widget.noteController.text = widget.noteController.text +
+          " " +
+          "${widget.controller.currentVideoPosition.toString().replaceRange(0, 1, "").replaceRange(7, 13, "").replaceFirst(":", "").replaceAll(".", "")}";
+    });
     log(currentPosition);
     return currentPosition;
   }
