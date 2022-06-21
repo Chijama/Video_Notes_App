@@ -1,19 +1,27 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share/share.dart';
 
 class Progress extends StatefulWidget {
   final PodPlayerController controller;
   final ScreenshotController screenshotController;
   final String filePath;
   final TextEditingController noteController;
+  final GlobalKey previewContainer;
 
   //final List<Duration> timestamps;
   const Progress(
@@ -21,6 +29,7 @@ class Progress extends StatefulWidget {
       required this.screenshotController,
       required this.filePath,
       required this.noteController,
+      required this.previewContainer,
       Key? key})
       : super(key: key);
 
@@ -37,7 +46,7 @@ class _ProgressState extends State<Progress> {
       children: [
         buildButton(const Icon(Icons.timer), 'Timestamps', getPosition),
         const SizedBox(width: 30),
-        buildButton(const Icon(Icons.camera), 'Screenshot', getPosition),
+        buildButton(const Icon(Icons.camera), 'Screenshot', getScreenshot2),
         const SizedBox(width: 30),
         buildButton(const Icon(Icons.notes_outlined), 'Transcripts', loadTranscript),
         const SizedBox(width: 30),
@@ -69,6 +78,32 @@ class _ProgressState extends State<Progress> {
     print('$image ********** Saved to gallery *********** $result');
     _showInSnackBar(message: 'Saved to gallery - video screenshot');
     //await saveImage(image);
+  }
+
+  Future getScreenshot2() async {
+    List<String> imagePaths = [];
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    return new Future.delayed(const Duration(milliseconds: 20), () async {
+      RenderRepaintBoundary? boundary =
+          widget.previewContainer.currentContext!.findRenderObject() as RenderRepaintBoundary?;
+      ui.Image image = await boundary!.toImage();
+      final directory = (await getApplicationDocumentsDirectory()).path;
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      File imgFile = new File('$directory/screenshot.png');
+
+      print(directory);
+      imagePaths.add(imgFile.path);
+      imgFile.writeAsBytes(pngBytes).then((value) async {
+        await Share.shareFiles(imagePaths,
+            subject: 'Share',
+            text: 'Check this Out!',
+            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      }).catchError((onError) {
+        print(onError);
+      });
+    });
   }
 
   loadTranscript() async {

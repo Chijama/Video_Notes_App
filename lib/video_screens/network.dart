@@ -21,6 +21,7 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
   final videoTextFieldCtr = TextEditingController();
   final screenshot_Controller = ScreenshotController();
   final TextEditingController noteController = TextEditingController();
+  GlobalKey previewContainer = new GlobalKey();
 
   _requestPermission() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -77,6 +78,7 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
                       height: MediaQuery.of(context).size.height * 0.1,
                       child: Progress(
                         noteController: noteController,
+                        previewContainer: previewContainer,
                         screenshotController: screenshot_Controller,
                         controller: controller,
                         filePath: widget.filePath.toString(),

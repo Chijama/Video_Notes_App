@@ -16,6 +16,8 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
   final videoTextFieldCtr = TextEditingController();
   final screenshot_controller = ScreenshotController();
   final TextEditingController noteController = TextEditingController();
+  GlobalKey previewContainer = new GlobalKey();
+
   @override
   void initState() {
     controller = PodPlayerController(
@@ -61,6 +63,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.1,
                       child: Progress(
+                        previewContainer: previewContainer,
                         screenshotController: screenshot_controller,
                         controller: controller,
                         noteController: noteController,
