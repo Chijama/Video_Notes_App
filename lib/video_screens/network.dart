@@ -1,21 +1,19 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:speech_to_text/buttons_bar.dart';
 import 'package:speech_to_text/text_editor.dart';
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PlayVideoFromLocalMedia extends StatefulWidget {
-  const PlayVideoFromLocalMedia({Key? key, required this.filePath})
-      : super(key: key);
+  const PlayVideoFromLocalMedia({Key? key, required this.filePath}) : super(key: key);
 
   final File filePath;
   // static const routeName = '/youtube-screen';
   @override
-  State<PlayVideoFromLocalMedia> createState() =>
-      _PlayVideoFromLocalMediaState();
+  State<PlayVideoFromLocalMedia> createState() => _PlayVideoFromLocalMediaState();
 }
 
 class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
@@ -34,9 +32,8 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
   @override
   void initState() {
     _requestPermission();
-    controller =
-        PodPlayerController(playVideoFrom: PlayVideoFrom.file(widget.filePath))
-          ..initialise();
+    controller = PodPlayerController(playVideoFrom: PlayVideoFrom.file(widget.filePath))
+      ..initialise();
     // loadVideo()
     super.initState();
   }
@@ -89,7 +86,7 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                child: TextEditor(),
+                child: TextEditor(controller: controller),
               ),
               //const SizedBox(height: 40),
             ],

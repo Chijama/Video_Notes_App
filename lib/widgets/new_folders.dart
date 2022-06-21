@@ -63,49 +63,47 @@ class _NewFolderState extends State<NewFolder> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        height: 300,
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: titlecontroller,
-              onSubmitted: (_) => submitData(),
-              // onChanged: (value) {
-              //   amountInput=value;
-              // },
-            ),
-            Row(
-              //crossAxisAlignment: CrossAxisAlignment.,
-              children: [
-                Text('Color: '),
-                TextButton(
-                  child: Text(
-                    'SELECT COLOR',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  onPressed: () => pickColor(context),
-                  style: TextButton.styleFrom(
-                    primary: Colors.blueAccent[900],
-                  ),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              child: Text('Create Note'),
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.headline6,
-                primary: Colors.white,
+    return Container(
+      padding: MediaQuery.of(context).viewInsets,
+      child: Wrap(
+        children: <Widget>[
+          Column(
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: 'Title'),
+                controller: titlecontroller,
+                onSubmitted: (_) => submitData(),
               ),
-              onPressed: submitData,
-            )
-          ],
-        ),
+              Row(
+                children: [
+                  const Text('Color: '),
+                  TextButton(
+                    child: Text(
+                      'SELECT COLOR',
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    onPressed: () => pickColor(context),
+                    style: TextButton.styleFrom(
+                      primary: Colors.blueAccent[900],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  child: const Text('Create Note'),
+                  style: TextButton.styleFrom(
+                    textStyle: Theme.of(context).textTheme.headline6,
+                    primary: Colors.white,
+                  ),
+                  onPressed: submitData,
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ],
       ),
     );
   }

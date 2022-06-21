@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+
 import 'screens/folders_screen.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,7 +18,7 @@ class MyApp extends StatelessWidget {
         //canvasColor: Color.fromARGB(255, 46, 46, 46),
         fontFamily: 'Raleway',
         textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(
+              headline6: const TextStyle(
                 fontSize: 20,
                 fontFamily: 'RobotoCondensed',
                 fontWeight: FontWeight.bold,

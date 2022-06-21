@@ -1,10 +1,9 @@
-import '../models/folder.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '/widgets/new_folders.dart';
 
+import '/widgets/new_folders.dart';
+import '../models/folder.dart';
 import '../widgets/folder_item.dart';
-import '../widgets/main_drawer.dart';
 
 class CategoriesScreen extends StatefulWidget {
   @override
@@ -23,15 +22,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   void _startAddNewFolder(BuildContext ctx) {
     showModalBottomSheet(
-        isScrollControlled: true,
-        context: ctx,
-        builder: (_) {
-          return GestureDetector(
-            onTap: () {},
-            child: NewFolder(_addNewFolder),
-            behavior: HitTestBehavior.opaque,
-          );
-        });
+      isScrollControlled: true,
+      context: ctx,
+      builder: (_) {
+        return NewFolder(_addNewFolder);
+      },
+    );
   }
 
   @override
@@ -40,7 +36,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       appBar: AppBar(
         title: const Text('Video Note-Taking Application'),
       ),
-      drawer: MainDrawer(),
       // body: Container(
       //   height: 900,
       //   child: _userFolders.isEmpty

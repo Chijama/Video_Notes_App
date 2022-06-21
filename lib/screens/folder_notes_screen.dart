@@ -1,14 +1,14 @@
-import 'dart:math' as math;
-import '../widgets/note_item.dart';
-import '/models/notes.dart';
-import 'package:flutter/material.dart';
-
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+
+import '/models/notes.dart';
 import '/video_screens/network.dart';
-import '/video_screens/youtube.dart';
 import '/video_screens/vimeo.dart';
+import '/video_screens/youtube.dart';
+import '../widgets/note_item.dart';
 
 class FolderNotesScreen extends StatefulWidget {
   static const routeName = '/folder-notes';
@@ -16,10 +16,7 @@ class FolderNotesScreen extends StatefulWidget {
   final String folderTitle;
   final Color globalColor;
   FolderNotesScreen(
-      {required this.noteId,
-        required this.folderTitle,
-        required this.globalColor,
-        Key? key})
+      {required this.noteId, required this.folderTitle, required this.globalColor, Key? key})
       : super(key: key);
 
   //const FolderNotesScreen({super.key});
@@ -47,112 +44,111 @@ class _FolderNotesScreenState extends State<FolderNotesScreen> {
           context,
           MaterialPageRoute(
               builder: ((context) => PlayVideoFromLocalMedia(
-                filePath: file,
-              ))));
+                    filePath: file,
+                  ))));
     }
   }
 
   Future youtubeUrl() => showDialog(
-    barrierDismissible: true,
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Enter Youtube URL'),
-      content: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: youtubeurlcontroller,
-              decoration: const InputDecoration(
-                labelText: 'Enter youtube url/id',
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: 'https://youtu.be/A3ltMaM6noM',
-                border: OutlineInputBorder(),
+        barrierDismissible: true,
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Enter Youtube URL'),
+          content: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  controller: youtubeurlcontroller,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter youtube url/id',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: 'https://youtu.be/A3ltMaM6noM',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          FocusScope(
-            canRequestFocus: false,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: widget.globalColor),
-              onPressed: () async {
-                if (youtubeurlcontroller.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter url'),
-                    ),
-                  );
-                  return;
-                } else {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => PlayVideoFromYoutube(
-                            youtubeVideoUrl: youtubeurlcontroller.text,
-                          ))));
+              const SizedBox(width: 10),
+              FocusScope(
+                canRequestFocus: false,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: widget.globalColor),
+                  onPressed: () async {
+                    if (youtubeurlcontroller.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please enter url'),
+                        ),
+                      );
+                      return;
+                    } else {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => PlayVideoFromYoutube(
+                                    youtubeVideoUrl: youtubeurlcontroller.text,
+                                  ))));
 
-                  return;
-                }
-              },
-              child: const Text('Load Video'),
-            ),
+                      return;
+                    }
+                  },
+                  child: const Text('Load Video'),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
   Future vimeoUrl() => showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: vimeourlcontroller,
-              decoration: const InputDecoration(
-                labelText: 'Enter vimeo id',
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: 'ex: 518228118',
-                border: OutlineInputBorder(),
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  controller: vimeourlcontroller,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter vimeo id',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: 'ex: 518228118',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          FocusScope(
-            canRequestFocus: false,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: widget.globalColor),
-              onPressed: () async {
-                if (youtubeurlcontroller.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Please enter id'),
-                    ),
-                  );
-                  return;
-                } else {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => PlayVideoFromVimeo(
-                              vimeoVideoId: vimeourlcontroller.text))));
+              const SizedBox(width: 10),
+              FocusScope(
+                canRequestFocus: false,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: widget.globalColor),
+                  onPressed: () async {
+                    if (youtubeurlcontroller.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Please enter id'),
+                        ),
+                      );
+                      return;
+                    } else {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) =>
+                                  PlayVideoFromVimeo(vimeoVideoId: vimeourlcontroller.text))));
 
-                  return;
-                }
-              },
-              child: const Text('Load Video'),
-            ),
+                      return;
+                    }
+                  },
+                  child: const Text('Load Video'),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
   @override
-
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -162,34 +158,33 @@ class _FolderNotesScreenState extends State<FolderNotesScreen> {
       floatingActionButton: ExpandableFab(
         distance: 112.0,
         children: [
-
           CircleAvatar(
             radius: 30,
             backgroundColor: widget.globalColor,
             child: IconButton(
-              icon: Icon(Icons.play_circle_outlined,
-                  color: Colors.white),
-                  tooltip: 'Youtube',
-                  onPressed: () => youtubeUrl(),
-                      ),),
+              icon: Icon(Icons.play_circle_outlined, color: Colors.white),
+              tooltip: 'Youtube',
+              onPressed: () => youtubeUrl(),
+            ),
+          ),
           CircleAvatar(
             radius: 30,
             backgroundColor: widget.globalColor,
             child: IconButton(
-              icon: Icon(Icons.video_call_sharp,
-                  color: Colors.white),
+              icon: Icon(Icons.video_call_sharp, color: Colors.white),
               tooltip: 'Vimeo',
               onPressed: () => vimeoUrl(),
-            ),),
+            ),
+          ),
           CircleAvatar(
             radius: 30,
             backgroundColor: widget.globalColor,
             child: IconButton(
-              icon: Icon(Icons.upload_outlined,
-                  color: Colors.white),
+              icon: Icon(Icons.upload_outlined, color: Colors.white),
               tooltip: 'Local Media',
               onPressed: () => localVideo(),
-            ),),
+            ),
+          ),
         ],
       ),
       body: GridView(
@@ -197,12 +192,12 @@ class _FolderNotesScreenState extends State<FolderNotesScreen> {
         children: _userNotes
             .map(
               (catData) => NoteItem(
-            catData.noteTitle,
-            catData.fldNoteColor,
-            catData.noteId,
-            catData.createdAt,
-          ),
-        )
+                catData.noteTitle,
+                catData.fldNoteColor,
+                catData.noteId,
+                catData.createdAt,
+              ),
+            )
             .toList(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
@@ -218,11 +213,11 @@ class _FolderNotesScreenState extends State<FolderNotesScreen> {
 @immutable
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
-    super.key,
+    Key? key,
     this.initialOpen,
     required this.distance,
     required this.children,
-  });
+  }) : super(key: key);
 
   final bool? initialOpen;
   final double distance;
@@ -232,8 +227,7 @@ class ExpandableFab extends StatefulWidget {
   _ExpandableFabState createState() => _ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab>
-    with SingleTickerProviderStateMixin {
+class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
@@ -314,9 +308,7 @@ class _ExpandableFabState extends State<ExpandableFab>
     final children = <Widget>[];
     final count = widget.children.length;
     final step = 90.0 / (count - 1);
-    for (var i = 0, angleInDegrees = 0.0;
-    i < count;
-    i++, angleInDegrees += step) {
+    for (var i = 0, angleInDegrees = 0.0; i < count; i++, angleInDegrees += step) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
@@ -398,11 +390,11 @@ class _ExpandingActionButton extends StatelessWidget {
 @immutable
 class ActionButton extends StatelessWidget {
   const ActionButton({
-    super.key,
+    Key? key,
     this.onPressed,
     required this.icon,
     required this.tooltip,
-  });
+  }) : super(key: key);
 
   final VoidCallback? onPressed;
   final Widget icon;

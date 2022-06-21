@@ -1,12 +1,11 @@
-import 'package:pod_player/pod_player.dart';
 import 'package:flutter/material.dart';
+import 'package:pod_player/pod_player.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:speech_to_text/buttons_bar.dart';
 import 'package:speech_to_text/text_editor.dart';
-import 'package:screenshot/screenshot.dart';
 
 class PlayVideoFromVimeo extends StatefulWidget {
-  const PlayVideoFromVimeo({Key? key, required this.vimeoVideoId})
-      : super(key: key);
+  const PlayVideoFromVimeo({Key? key, required this.vimeoVideoId}) : super(key: key);
   final String vimeoVideoId;
   @override
   State<PlayVideoFromVimeo> createState() => _PlayVideoFromVimeoState();
@@ -73,18 +72,15 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                child: TextEditor(),
+                child: TextEditor(controller: controller),
               ),
               //const SizedBox(height: 40),
             ],
           ),
         ),
       ),
-
-          );
+    );
   }
-
-
 
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
