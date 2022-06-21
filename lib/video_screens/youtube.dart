@@ -18,6 +18,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
   late final PodPlayerController controller;
   final videoTextFieldCtr = TextEditingController();
   final screenshot_Controller = ScreenshotController();
+  GlobalKey previewContainer = new GlobalKey();
 
   void loadVideo() async {
     await controller.changeVideo(playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl));
@@ -54,8 +55,9 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Screenshot(
-                controller: screenshot_Controller,
+              RepaintBoundary(
+                key: previewContainer,
+                //controller: screenshot_Controller,
                 child: Container(
                   // width: MediaQuery.of(context).size.width,
                   // height: MediaQuery.of(context).size.height * 0.5,
@@ -77,6 +79,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.1,
                       child: Progress(
+                        previewContainer: previewContainer,
                         screenshotController: screenshot_Controller,
                         controller: controller,
                         filePath: "",
