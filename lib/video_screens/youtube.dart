@@ -18,6 +18,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
   late final PodPlayerController controller;
   final videoTextFieldCtr = TextEditingController();
   final screenshot_Controller = ScreenshotController();
+  final TextEditingController noteController = TextEditingController();
 
   void loadVideo() async {
     await controller.changeVideo(playVideoFrom: PlayVideoFrom.youtube(widget.youtubeVideoUrl));
@@ -79,6 +80,7 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
                       child: Progress(
                         screenshotController: screenshot_Controller,
                         controller: controller,
+                        noteController: noteController,
                         filePath: "",
                       ),
                     ),
@@ -88,7 +90,10 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                child: TextEditor(controller: controller),
+                child: TextEditor(
+                  controller: controller,
+                  noteController: noteController,
+                ),
               ),
               //const SizedBox(height: 40),
             ],

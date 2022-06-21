@@ -13,12 +13,14 @@ class Progress extends StatefulWidget {
   final PodPlayerController controller;
   final ScreenshotController screenshotController;
   final String filePath;
+  final TextEditingController noteController;
 
   //final List<Duration> timestamps;
   const Progress(
       {required this.controller,
       required this.screenshotController,
       required this.filePath,
+      required this.noteController,
       Key? key})
       : super(key: key);
 
@@ -92,6 +94,11 @@ class _ProgressState extends State<Progress> {
   // Future<String> saveImage(Uint8List bytes) async {
   getPosition() async {
     String currentPosition = widget.controller.currentVideoPosition.toString();
+    setState(() {
+      widget.noteController.text = widget.noteController.text +
+          " " +
+          "${widget.controller.currentVideoPosition.toString().replaceRange(0, 1, "").replaceRange(7, 13, "").replaceFirst(":", "").replaceAll(".", "")}";
+    });
     log(currentPosition);
     return currentPosition;
   }
