@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'screens/folders_screen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -15,7 +20,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(
           secondary: Colors.red,
         ),
-        //canvasColor: Color.fromARGB(255, 46, 46, 46),
         fontFamily: 'Raleway',
         textTheme: ThemeData.light().textTheme.copyWith(
               headline6: const TextStyle(
@@ -25,7 +29,6 @@ class MyApp extends StatelessWidget {
               ),
             ),
       ),
-      //home: CategoriesScreen(),
       initialRoute: '/', // default is '/'
       routes: {
         '/': (ctx) => CategoriesScreen(),

@@ -3,6 +3,8 @@ import 'dart:math' as math;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:speech_to_text/video_screens/domain/controllers/youtube_controller.dart';
 
 import '/models/notes.dart';
 import '/video_screens/network.dart';
@@ -10,7 +12,7 @@ import '/video_screens/vimeo.dart';
 import '/video_screens/youtube.dart';
 import '../widgets/note_item.dart';
 
-class FolderNotesScreen extends StatefulWidget {
+class FolderNotesScreen extends ConsumerStatefulWidget {
   static const routeName = '/folder-notes';
   final String noteId;
   final String folderTitle;
@@ -22,16 +24,18 @@ class FolderNotesScreen extends StatefulWidget {
   //const FolderNotesScreen({super.key});
 
   @override
-  State<FolderNotesScreen> createState() => _FolderNotesScreenState();
+  ConsumerState<FolderNotesScreen> createState() => _FolderNotesScreenState();
 }
 
-class _FolderNotesScreenState extends State<FolderNotesScreen> {
+class _FolderNotesScreenState extends ConsumerState<FolderNotesScreen> {
   final youtubeurlcontroller = TextEditingController();
   final vimeourlcontroller = TextEditingController();
   final networkurlcontroller = TextEditingController();
 
   final List<Note> _userNotes = [];
   Future localVideo() async {
+    ref.watch(ytProviderController).taggedStamps = [];
+
     final result = await FilePicker.platform.pickFiles(
       type: FileType.video,
     );
@@ -44,111 +48,125 @@ class _FolderNotesScreenState extends State<FolderNotesScreen> {
           context,
           MaterialPageRoute(
               builder: ((context) => PlayVideoFromLocalMedia(
-                globalColor: widget.globalColor,
+                    globalColor: widget.globalColor,
                     filePath: file,
                   ))));
     }
   }
 
-  Future youtubeUrl() => showDialog(
+  Future youtubeUrl() {
+    ref.watch(ytProviderController).taggedStamps = [];
+
+    return showDialog(
         barrierDismissible: true,
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Enter Youtube URL'),
-          content: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: TextField(
-                  controller: youtubeurlcontroller,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter youtube url/id',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: 'https://youtu.be/A3ltMaM6noM',
-                    border: OutlineInputBorder(),
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Enter Youtube URL'),
+            content: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    controller: youtubeurlcontroller,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter youtube url/id',
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: 'https://youtu.be/A3ltMaM6noM',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              FocusScope(
-                canRequestFocus: false,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: widget.globalColor),
-                  onPressed: () async {
-                    if (youtubeurlcontroller.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please enter url'),
-                        ),
-                      );
-                      return;
-                    } else {
-                      Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => PlayVideoFromYoutube(
-                                    youtubeVideoUrl: youtubeurlcontroller.text,
-                                  ))));
+                const SizedBox(width: 10),
+                FocusScope(
+                  canRequestFocus: false,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: widget.globalColor),
+                    onPressed: () async {
+                      if (youtubeurlcontroller.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please enter url'),
+                          ),
+                        );
+                        return;
+                      } else {
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => PlayVideoFromYoutube(
+                                      youtubeVideoUrl: youtubeurlcontroller.text,
+                                    ))));
 
-                      return;
-                    }
-                  },
-                  child: const Text('Load Video'),
+                        return;
+                      }
+                    },
+                    child: const Text('Load Video'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
-  Future vimeoUrl() => showDialog(
+              ],
+            ),
+          );
+        });
+  }
+
+  Future vimeoUrl() {
+    ref.watch(ytProviderController).taggedStamps = [];
+
+    return showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          content: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: TextField(
-                  controller: vimeourlcontroller,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter vimeo id',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: 'ex: 518228118',
-                    border: OutlineInputBorder(),
+        builder: (context) {
+          ref.watch(ytProviderController).taggedStamps = [];
+
+          return AlertDialog(
+            content: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    controller: vimeourlcontroller,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter vimeo id',
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: 'ex: 518228118',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              FocusScope(
-                canRequestFocus: false,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: widget.globalColor),
-                  onPressed: () async {
-                    if (youtubeurlcontroller.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Please enter id'),
-                        ),
-                      );
-                      return;
-                    } else {
-                      Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) =>
-                                  PlayVideoFromVimeo(vimeoVideoId: vimeourlcontroller.text))));
+                const SizedBox(width: 10),
+                FocusScope(
+                  canRequestFocus: false,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: widget.globalColor),
+                    onPressed: () async {
+                      if (youtubeurlcontroller.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter id'),
+                          ),
+                        );
+                        return;
+                      } else {
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PlayVideoFromVimeo(vimeoVideoId: vimeourlcontroller.text))));
 
-                      return;
-                    }
-                  },
-                  child: const Text('Load Video'),
+                        return;
+                      }
+                    },
+                    child: const Text('Load Video'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
+              ],
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

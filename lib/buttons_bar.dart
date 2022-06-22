@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pod_player/pod_player.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
+import 'package:speech_to_text/video_screens/domain/controllers/youtube_controller.dart';
 
 class Progress extends StatefulWidget {
   final PodPlayerController controller;
@@ -23,22 +24,25 @@ class Progress extends StatefulWidget {
   final String filePath;
   final TextEditingController noteController;
   final GlobalKey previewContainer;
+  final YoutubeProvider youtubeProvider;
 
-  //final List<Duration> timestamps;
-  const Progress(
-      {required this.controller,
-      required this.screenshotController,
-      required this.filePath,
-      required this.noteController,
-      required this.previewContainer,
-      Key? key})
-      : super(key: key);
+  const Progress({
+    Key? key,
+    required this.controller,
+    required this.screenshotController,
+    required this.filePath,
+    required this.noteController,
+    required this.previewContainer,
+    required this.youtubeProvider,
+  }) : super(key: key);
 
   @override
   State<Progress> createState() => _ProgressState();
 }
 
 class _ProgressState extends State<Progress> {
+  int transcriptMinutePosition = 00;
+  int transcriptSecondPosition = 00;
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   @override
   Widget build(BuildContext context) {
@@ -55,12 +59,7 @@ class _ProgressState extends State<Progress> {
       ],
     );
   }
-  final List<Duration> timestamps=[
-  Duration(minutes: 0, seconds: 14),
-  Duration(minutes: 0, seconds: 48),
-  Duration(minutes: 1, seconds: 18),
-  Duration(minutes: 1, seconds: 47),
-  ];
+
   Widget buildButton(Widget icons, String tip, Function()? onpressed) {
     return Container(
       height: 40.0,
@@ -89,7 +88,7 @@ class _ProgressState extends State<Progress> {
   Future getScreenshot2() async {
     List<String> imagePaths = [];
     final RenderBox box = context.findRenderObject() as RenderBox;
-    return new Future.delayed(const Duration(milliseconds: 20), () async {
+    return Future.delayed(const Duration(milliseconds: 20), () async {
       RenderRepaintBoundary? boundary =
           widget.previewContainer.currentContext!.findRenderObject() as RenderRepaintBoundary?;
       ui.Image image = await boundary!.toImage();
@@ -97,7 +96,7 @@ class _ProgressState extends State<Progress> {
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
 
       Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/screenshot.png');
+      File imgFile = File('$directory/screenshot.png');
 
       print(directory);
       imagePaths.add(imgFile.path);
@@ -114,7 +113,7 @@ class _ProgressState extends State<Progress> {
 
   loadTranscript() async {
     print(widget.filePath);
-    print(widget.filePath.split('/')[-1]);
+    // print(widget.filePath.split('/')[-1]);
     final url = 'http://127.0.0.1:5000/name';
     return await http.post(Uri.parse(url), body: json.encode({'name': widget.filePath}));
   }
@@ -132,34 +131,45 @@ class _ProgressState extends State<Progress> {
       ),
     );
   }
-  Future rewindToPosition() async {
-    if (timestamps.isEmpty) return;
-    Duration rewind(Duration currentPosition) => timestamps.lastWhere(
-          (element) => currentPosition > element + Duration(seconds: 2),
-      orElse: () => Duration.zero,
-    );
 
+  Future rewindToPosition() async {
+    Duration rewind(Duration currentPosition) =>
+        Duration(minutes: transcriptMinutePosition, seconds: transcriptSecondPosition);
     await goToPosition(rewind);
   }
 
-  // Future<String> saveImage(Uint8List bytes) async {
   getPosition() async {
+    // var prv = ref.watch(ytProviderController);
+
     String currentPosition = widget.controller.currentVideoPosition.toString();
-    setState(() {
-      widget.noteController.text = widget.noteController.text +
-          " " +
-          "${widget.controller.currentVideoPosition.toString().replaceRange(0, 1, "").replaceRange(7, 13, "").replaceFirst(":", "").replaceAll(".", "")}";
-    });
+
+    String shortCurrentPosition = widget.controller.currentVideoPosition
+        .toString()
+        .replaceRange(0, 1, "")
+        .replaceRange(7, 13, "")
+        .replaceFirst(":", "")
+        .replaceAll(".", "");
     log(currentPosition);
+    String minute = shortCurrentPosition.split(':')[0];
+    String second = shortCurrentPosition.split(':')[1];
+    log("minute ===> $minute");
+    log("second ===>> $second");
+    widget.youtubeProvider.taggedStamps.add(shortCurrentPosition);
+    widget.youtubeProvider.taggedStamps = widget.youtubeProvider.taggedStamps;
+    setState(() {
+      transcriptMinutePosition = int.parse(minute);
+      transcriptSecondPosition = int.parse(second);
+      widget.noteController.text = widget.noteController.text + " " + shortCurrentPosition;
+    });
+    setState(() {});
     return currentPosition;
   }
+
   Future goToPosition(
-      Duration Function(Duration currentPosition) builder,
-      ) async {
+    Duration Function(Duration currentPosition) builder,
+  ) async {
     final currentPosition = widget.controller.currentVideoPosition;
     final newPosition = builder(currentPosition);
     await widget.controller.videoSeekTo(newPosition);
   }
 }
-
-
