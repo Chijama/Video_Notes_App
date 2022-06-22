@@ -8,9 +8,10 @@ import 'package:speech_to_text/buttons_bar.dart';
 import 'package:speech_to_text/text_editor.dart';
 
 class PlayVideoFromLocalMedia extends StatefulWidget {
-  const PlayVideoFromLocalMedia({Key? key, required this.filePath}) : super(key: key);
+  const PlayVideoFromLocalMedia({Key? key, required this.filePath, required this.globalColor}) : super(key: key);
 
   final File filePath;
+  final Color globalColor;
   // static const routeName = '/youtube-screen';
   @override
   State<PlayVideoFromLocalMedia> createState() => _PlayVideoFromLocalMediaState();
@@ -25,6 +26,7 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
 
   _requestPermission() async {
     Map<Permission, PermissionStatus> statuses = await [
+
       Permission.storage,
     ].request();
     final info = statuses[Permission.storage].toString();
@@ -57,8 +59,9 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
               Screenshot(
                 controller: screenshot_Controller,
                 child: Container(
+                  padding: EdgeInsetsDirectional.all(0),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.6,
                   child: PodVideoPlayer(
                     controller: controller,
                     videoThumbnail: const DecorationImage(
@@ -70,26 +73,43 @@ class _PlayVideoFromLocalMediaState extends State<PlayVideoFromLocalMedia> {
                   ),
                 ),
               ),
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      child: Progress(
-                        noteController: noteController,
-                        previewContainer: previewContainer,
-                        screenshotController: screenshot_Controller,
-                        controller: controller,
-                        filePath: widget.filePath.toString(),
-                      ),
-                    ),
+
+
+
+                    Row(children: [
+                      Expanded(
+                        flex:3,
+                    child: TextField(
+
+                        decoration: const InputDecoration(
+
+                          labelText: 'Enter Title',
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          hintText: 'https://youtu.be/A3ltMaM6noM',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),),
+
+                      Expanded(
+                        flex:1,
+                        child: Container(
+
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        child: Progress(
+                          noteController: noteController,
+                          previewContainer: previewContainer,
+                          screenshotController: screenshot_Controller,
+                          controller: controller,
+                          filePath: widget.filePath.toString(),
+                        ),
+                      ),)
+
                   ],
                 ),
-              ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: TextEditor(
                   controller: controller,
                   noteController: noteController,

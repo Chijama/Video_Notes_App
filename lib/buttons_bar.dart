@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
@@ -45,16 +46,21 @@ class _ProgressState extends State<Progress> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         buildButton(const Icon(Icons.timer), 'Timestamps', getPosition),
-        const SizedBox(width: 30),
+        const SizedBox(width: 10),
         buildButton(const Icon(Icons.camera), 'Screenshot', getScreenshot2),
-        const SizedBox(width: 30),
-        buildButton(const Icon(Icons.notes_outlined), 'Transcripts', loadTranscript),
-        const SizedBox(width: 30),
-        buildButton(const Icon(Icons.camera), 'Real-Time Transcripts', getPosition)
+        const SizedBox(width: 10),
+        buildButton(const Icon(Icons.notes_outlined), 'Transcripts', rewindToPosition),
+        const SizedBox(width: 10),
+        buildButton(const Icon(Icons.edit_note_sharp), 'Real-Time Transcripts', loadTranscript)
       ],
     );
   }
-
+  final List<Duration> timestamps=[
+  Duration(minutes: 0, seconds: 14),
+  Duration(minutes: 0, seconds: 48),
+  Duration(minutes: 1, seconds: 18),
+  Duration(minutes: 1, seconds: 47),
+  ];
   Widget buildButton(Widget icons, String tip, Function()? onpressed) {
     return Container(
       height: 40.0,
@@ -64,7 +70,7 @@ class _ProgressState extends State<Progress> {
         color: Colors.blue,
       ),
       child: IconButton(
-        onPressed: getPosition,
+        onPressed: onpressed,
         icon: icons,
         color: Colors.white,
       ),
@@ -108,6 +114,7 @@ class _ProgressState extends State<Progress> {
 
   loadTranscript() async {
     print(widget.filePath);
+    print(widget.filePath.split('/')[-1]);
     final url = 'http://127.0.0.1:5000/name';
     return await http.post(Uri.parse(url), body: json.encode({'name': widget.filePath}));
   }
@@ -125,6 +132,15 @@ class _ProgressState extends State<Progress> {
       ),
     );
   }
+  Future rewindToPosition() async {
+    if (timestamps.isEmpty) return;
+    Duration rewind(Duration currentPosition) => timestamps.lastWhere(
+          (element) => currentPosition > element + Duration(seconds: 2),
+      orElse: () => Duration.zero,
+    );
+
+    await goToPosition(rewind);
+  }
 
   // Future<String> saveImage(Uint8List bytes) async {
   getPosition() async {
@@ -137,13 +153,13 @@ class _ProgressState extends State<Progress> {
     log(currentPosition);
     return currentPosition;
   }
+  Future goToPosition(
+      Duration Function(Duration currentPosition) builder,
+      ) async {
+    final currentPosition = widget.controller.currentVideoPosition;
+    final newPosition = builder(currentPosition);
+    await widget.controller.videoSeekTo(newPosition);
+  }
 }
 
-Future goToPosition(
-  Duration Function(Duration currentPosition) builder,
-) async {
-  //final currentPosition = controller.currentVideoPosition;
-  //final newPosition = builder(currentPosition);
 
-  // await widget.controller.videoSeekTo(newPosition);
-}

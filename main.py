@@ -200,7 +200,20 @@ def main():
                       aws_secret_access_key='OXT0f8F+9FvXvahvO+WwJIHmgrMDr1jB5gKDq/cQ',
                       region_name="us-east-1"
                       )
-    file_path = 'C:/Users/HP/Downloads/Newname.mp4'
+    file_path = r'C:\Users\HP\Videos\DEMO\How to Make a UML Sequence Diagram.mp4'
+    # head_tail = os.path.split(file_path)
+    # bucket_name = 'transcribe-videonotes'
+    # #response = s3.list_buckets()
+    # # print('Existing buckets:')
+    # # for bucket in response['Buckets']:
+    # #     print(f'  {bucket["Name"]}')
+    # file_name = 't' + datetime.datetime.now().strftime("%Y%M%H%M%S") + head_tail[1]
+    # s3.upload_file(file_path, bucket_name, file_name)
+    # print(amazon_transcribe(file_name,bucket_name, 7))
+    # amazon_transcribe(file_name,bucket_name, 7)
+    # s3.download_file(Bucket=bucket_name, Key= 'output-transcriptions/'+(file_name.strip()).split('.')[0]+".json", Filename= (file_name.strip()).split('.')[0]+'.json')
+    # read_output(file_name)
+    # # return file_name
 
 
     if (request.method =='POST'):
@@ -218,7 +231,7 @@ def main():
         s3.upload_file(file_path, bucket_name, file_name)
         #print(amazon_transcribe(file_name,bucket_name, 7))
         amazon_transcribe(file_name,bucket_name, 7)
-        s3.download_file(Bucket=bucket_name, Key= 'output-transcriptions/'+(file_name).split('.')[0]+".json", Filename= (file_name).split('.')[0]+'.json')
+        s3.download_file(Bucket=bucket_name, Key= 'output-transcriptions/'+(file_name.replace(' ','')).split('.')[0]+".json", Filename= (file_name.replace(' ','')).split('.')[0]+'.json')
         read_output(file_name)
         return file_name
     else: print("did not work")

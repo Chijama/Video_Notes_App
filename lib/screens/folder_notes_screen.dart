@@ -44,6 +44,7 @@ class _FolderNotesScreenState extends State<FolderNotesScreen> {
           context,
           MaterialPageRoute(
               builder: ((context) => PlayVideoFromLocalMedia(
+                globalColor: widget.globalColor,
                     filePath: file,
                   ))));
     }

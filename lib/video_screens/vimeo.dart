@@ -37,14 +37,15 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
     return Scaffold(
       appBar: AppBar(title: const Text('Vimeo player')),
       body: SafeArea(
+        child: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
               Screenshot(
                 controller: screenshot_controller,
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2,
+                  // width: MediaQuery.of(context).size.width,
+                  // height: MediaQuery.of(context).size.height / 2,
                   child: PodVideoPlayer(
                     controller: controller,
                     videoThumbnail: const DecorationImage(
@@ -81,14 +82,13 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
                   noteController: noteController,
                 ),
               ),
-              //const SizedBox(height: 40),
+
             ],
           ),
         ),
       ),
-    );
+    ),);
   }
-
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
