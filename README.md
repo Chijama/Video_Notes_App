@@ -1,4 +1,4 @@
-# speech_to_text
+# Video Note Taking Application
 
 A new Flutter project.
 
